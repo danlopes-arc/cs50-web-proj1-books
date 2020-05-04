@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex">
+  <form method="post" class="form-inline mx-auto my-3">
+    <input
+      type="text"
+      name="term"
+      id="input-search"
+      class="form-control mr-2"
+      placeholder="title, isbn, author..."
+      value="{{ term }}"
+      autofocus
+      onfocus="this.setSelectionRange(0, this.value.length)"
+    />
+    <button type="submit" class="btn btn-primary">Search</button>
+    {% if term %}
+    <a href="/" class="btn btn-outline-primary ml-2">Clear</a>
+    {% endif %}
+  </form>
+</div>
+{% if not books %}
+<div class="alert alert-danger text-center" role="alert">
+  Sorry. There are no books with such terms.
+</div>
+{% else %}
+<div class="card">
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <th scope="col">ISBN</th>
+      <th scope="col">Title</th>
+      <th scope="col">Author</th>
+      <th scope="col">Year</th>
+    </thead>
+    <tbody>
+      {% for book in books %}
+      <tr data-href="/{{ book['isbn'] }}" class="row-link">
+        <td>{{ book["isbn"] }}</td>
+        <td>{{ book["title"] }}</td>
+        <td>{{ book["author"] }}</td>
+        <td>{{ book["year"] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const rows = document.querySelectorAll("tr[data-href]")
+    rows.forEach(row => {
+      row.addEventListener("click", () => {
+        window.location.href = row.dataset.href
+      })
+    })
+  })
+</script>
+{% endblock content %}
