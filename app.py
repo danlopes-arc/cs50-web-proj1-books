@@ -26,11 +26,32 @@ Session(app)
 # Set up database
 # engine = create_engine(os.getenv("DATABASE_URL"))
 engine = create_engine(DATABASE_URL)
-db = scoped_session(sessionmaker(bind=engine))
+# db = scoped_session(sessionmaker(bind=engine))
+db = engine.connect()
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     # res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GOODREADS_KEY, "isbns": "9781632168146"})
+    books = db.execute("SELECT * FROM books;")
     session["user_id"] = 12
-    return render_template("index.html")
+
+    if request.method == "GET":
+        print(books)
+        return render_template("index.html", books=books)
+
+    term = request.form.get("term")
+
+    if not term:
+        return render_template("index.html", books=books)
+
+    filtered_books = []
+    for book in books:
+        if (book["isbn"].lower().find(term.lower()) >= 0 or
+            book["title"].lower().find(term.lower()) >= 0 or
+            book["author"].lower().find(term.lower()) >= 0):
+            filtered_books.append(book)
+    
+    return render_template("index.html", books=filtered_books, term=term)
+
+
