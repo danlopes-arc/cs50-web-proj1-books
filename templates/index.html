@@ -44,6 +44,9 @@
   </table>
 </div>
 {% endif %}
+{% endblock content %}
+
+{% block script %}
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const rows = document.querySelectorAll("tr[data-href]")
@@ -54,4 +57,4 @@
     })
   })
 </script>
-{% endblock content %}
+{% endblock script %}

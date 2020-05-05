@@ -18,6 +18,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/static/style.css" />
+    {% block style %}{% endblock style %}
   </head>
   <body>
     <header class="sticky-top bg-light">
@@ -45,14 +46,20 @@
         </div>
       </nav>
     </header>
-
     <main class="container">
+      {% if errors %}
+      <div class="alert alert-danger my-3" role="alert">
+        {% for error in errors %}
+          <p class="m-0">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
       {% block content %}{% endblock content %}
     </main>
     <footer class="p-5 text-center text-muted small">
       &copy; 2020 - Books
     </footer>
-
+      {% block script %}{% endblock script %}
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

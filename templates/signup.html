@@ -1,0 +1,49 @@
+
+{% extends "layout.html" %}
+{% block style %}
+<style>
+  .form-credentials {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+  }
+</style>
+{% endblock style %}
+{% block content %}
+
+<form method="post" class="form-credentials text-center">
+  <h1 class="my-5">Sign Up</h1>
+  <div class="form-group">
+    <label for="input-nickname">Nickname</label>
+    <input
+      type="text"
+      name="nickname"
+      class="form-control"
+      id="input-nickname"
+      placeholder="Enter a nickname"
+    />
+  </div>
+  <div class="form-group">
+    <label for="input-password">Password</label>
+    <input
+      type="password"
+      name="password"
+      class="form-control"
+      id="input-password"
+      placeholder="Enter the password"
+    />
+  </div>
+  <div class="form-group">
+    <label for="input-repeat-password">Repeat Password</label>
+    <input
+      type="password"
+      name="repeat-password"
+      class="form-control"
+      id="input-repeat-password"
+      placeholder="Enter the password again"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock content %}
