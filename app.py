@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, redirect, render_template, request, jsonify
+from flask import Flask, session, redirect, render_template, request, jsonify, abort
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
@@ -126,6 +126,33 @@ def login():
 def logout():
     session.clear()
     return redirect("/")
+
+@app.route("/api/<isbn>")
+def api_book(isbn):
+    book_q = db.execute(text("""
+    SELECT * FROM books WHERE isbn = :isbn;
+    """), {"isbn": isbn})
+    book = query_to_dict_array(book_q)
+
+    if not book:
+        abort(404)
+
+    book = book[0]
+
+    reviews_q = db.execute(text("""
+    SELECT COUNT(*) AS "count", AVG(rating) AS "average"
+    FROM reviews
+    WHERE book_id = :book_id;
+    """), {"book_id": book["id"]})
+    reviews = query_to_dict_array(reviews_q)[0]
+    print()
+    print("REVIEWS:", reviews["average"])
+    print()
+
+    book_resp = {**book, **{"review_count": reviews["count"], "average_score": float(reviews["average"])}}
+    book_resp.pop("id")
+
+    return jsonify(book_resp)
 
 @app.route("/<isbn>", methods=["GET", "POST"])
 def book(isbn):
