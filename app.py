@@ -41,8 +41,6 @@ def login_required(f):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    # res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GOODREADS_KEY, "isbns": "9781632168146"})
-
     books = db.execute("SELECT * FROM books;")
     term = request.form.get("term")
 
@@ -162,9 +160,12 @@ def book(isbn):
     """), {"isbn": isbn})
     reviews = query_to_dict_array(reviews_q)
 
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GOODREADS_KEY, "isbns": isbn})
+
+    goodreads_info = res.json()["books"][0]
+
     if request.method == "GET":
-        print("REVIEW:", review)
-        return render_template("book.html", book=book, reviews=reviews, user_review=review)
+        return render_template("book.html", book=book, reviews=reviews, user_review=review, goodreads_info=goodreads_info)
 
     rev_text = request.form.get("text")
     rating = int(request.form.get("rating"))
@@ -177,7 +178,7 @@ def book(isbn):
         errors.append("You've already posted a review about this book")
     
     if errors:
-        return render_template("book.html", book=book, reviews=reviews, errors=errors, user_review=review)
+        return render_template("book.html", book=book, reviews=reviews, errors=errors, user_review=review, goodreads_info=goodreads_info)
 
     db.execute(text("""
     INSERT INTO reviews(user_id, book_id, rating, text)

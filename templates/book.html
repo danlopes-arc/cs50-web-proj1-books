@@ -1,55 +1,108 @@
-
 {% extends "layout.html" %}
+
 {% block style %}{% endblock style %}
+
 {% block content %}
+
 {% if not book %}
-<div class="alert alert-danger text-center mt-3" role="alert">
-  There's no such book
-</div>
+
+  <div class="alert alert-danger text-center mt-3" role="alert">
+    There's no such book
+  </div>
+
 {% else %}
-<div class="card mt-3">
-  <div class="card-header">
-    <h1>{{ book["title"] }}</h1>
-    <h4>by {{ book["author"] }}</h4>
-    <p>ISBN: {{ book["isbn"] }}</p>
-  </div>
-  <div class="card-body">
-    {% if session["user_id"]%}
-      {% if not user_review %}
-      <form class="form" method="POST">
-        <label for="review-text">Write a review</label>
-        <textarea name="text" class="form-control mb-3" id="review-text" rows="3"></textarea>
-        <div class="row">
-          <div class="col-md-2 col-sm-6">
-            <label for="review-rating">Rating</label>
-            <select name="rating" class="form-control mb-3 mw-50" id="review-rating">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-      {% else %}
-      <h5>Your Review:</h5>
-      <p class="card-body">
-        <span class="bg-primary text-light rounded px-2 pb-1 mr-2">{{ user_review["rating"] }}</span>
-        {{ user_review["text"] }}
-      </p>
+
+  <div class="card mt-3">
+    <div class="card-header">
+      <h1>{{ book["title"] }}</h1>
+      <h4>by {{ book["author"] }}</h4>
+      <p>ISBN: {{ book["isbn"] }}</p>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <h5>Goodreads Info</h5>
+
+        {% if not goodreads_info %}
+        
+          <p>There's no info about this book on Goodreads</p>
+
+        {% else %}
+
+          <p>
+            Rating <strong>{{ goodreads_info["average_rating"] }}</strong>/5 from
+            <strong>{{ goodreads_info["work_ratings_count"] }}</strong> reviews.
+          </p>
+
+        {% endif %}
+
+      </li>
+      {% if session["user_id"] %}
+
+        <li class="list-group-item">
+
+          {% if not user_review %}
+
+            <form class="form" method="POST">
+              <label for="review-text">Write a review</label>
+              <textarea
+                name="text"
+                class="form-control mb-3"
+                id="review-text"
+                rows="3"
+              ></textarea>
+              <div class="row">
+                <div class="col-md-2 col-sm-6">
+                  <label for="review-rating">Rating</label>
+                  <select
+                    name="rating"
+                    class="form-control mb-3 mw-50"
+                    id="review-rating"
+                  >
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+          {% else %}
+
+            <h5>Your Review on Books.com:</h5>
+            <p class="card-body">
+              <span class="bg-primary text-light rounded px-2 pb-1 mr-2"
+                >{{ user_review["rating"] }}</span
+              >
+              {{ user_review["text"] }}
+            </p>
+
+          {% endif %}
+
+        </li>
+
       {% endif %}
-    {% endif %}
+
+    </ul>
   </div>
-</div>
-{% for review in reviews %}
-<div class="card mt-3">
-  <div class="card-header">
-    <h5><span class="bg-primary text-light rounded px-2 pb-1 mr-2"> {{ review["rating"] }}</span>{{ review["nickname"] }}</h5>
-  </div>
-  <p class="card-body">{{ review["text"] }}</p>
-</div>
-{% endfor %}
+
+  {% for review in reviews %}
+
+    <div class="card mt-3">
+      <div class="card-header">
+        <h5>
+          <span class="bg-primary text-light rounded px-2 pb-1 mr-2">
+            {{ review["rating"] }}</span
+          >{{ review["nickname"] }}
+        </h5>
+      </div>
+      <p class="card-body">{{ review["text"] }}</p>
+    </div>
+
+  {% endfor %}
+
 {% endif %}
+
 {% endblock content %}
